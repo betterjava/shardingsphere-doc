@@ -1,6 +1,6 @@
 +++
 title = "Release Guide"
-weight = 4
+weight = 6
 chapter = true
 +++
 
@@ -135,6 +135,12 @@ Be sure to remove \<distributionManagement\> section from your POM so they inher
 </parent>
 ```
 
+### Update Release Notes
+
+```
+https://github.com/apache/incubator-shardingsphere/blob/dev/RELEASE-NOTES.md
+```
+
 ### Create Release Branch
 
 Suppose ShardingSphere source codes downloaded from github is under `~/incubator-shardingsphere/` directory and the version to be released is `4.0.0-RC`. 
@@ -143,9 +149,8 @@ Create `${RELEASE.VERSION}-release` branch, where all the following operations a
 ```shell
 cd ~/incubator-shardingsphere/
 git pull
-git branch ${RELEASE.VERSION}-release
+git checkout -b ${RELEASE.VERSION}-release
 git push origin ${RELEASE.VERSION}-release
-git checkout ${RELEASE.VERSION}-release
 ```
 
 ### Pre-Release Check
@@ -241,6 +246,8 @@ cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-j
 cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-jdbc-distribution/target/*.tar.gz.asc ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
 cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-proxy-distribution/target/*.tar.gz ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
 cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-proxy-distribution/target/*.tar.gz.asc ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
+cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-ui-distribution/target/*.tar.gz ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
+cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-ui-distribution/target/*.tar.gz.asc ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
 ```
 
 ### Generate sign files
@@ -249,6 +256,7 @@ cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-p
 shasum -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip >> apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip.sha512
 shasum -b -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz >> apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz.sha512
 shasum -b -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz >> apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz.sha512
+shasum -b -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz >> apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz.sha512
 ```
 
 ### Commit to Apache SVN
@@ -266,6 +274,7 @@ svn --username=${APACHE LDAP username} commit -m "release ${RELEASE.VERSION}"
 shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip.sha512
 shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz.sha512
 shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz.sha512
+shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz.sha512
 ```
 
 ### Check gpg Signature
@@ -287,6 +296,7 @@ Then, check the gpg signature.
 gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip
 gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz
 gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz
+gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz
 ```
 
 ### Check Released Files
@@ -306,7 +316,8 @@ Decompress `apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip` and che
 
 #### Check binary packages
 
-Decompress `apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz` and `apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz` to check the following items:
+Decompress `apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz`, `apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz` and `apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz`
+to check the following items:
 
 *   The release files have the word `incubating` in their name
 *   `DISCLAIMER` file exists
@@ -448,12 +459,12 @@ incubator release.
 
 ShardingSphere is an open-source ecosystem consisted of a set of distributed database middleware solutions, including 2 independent products, Sharding-JDBC & Sharding-Proxy. 
 They both provide functions of data sharding, distributed transaction and database orchestration, applicable in a variety of situations such as Java isomorphism, heterogeneous language. 
-Aiming at reasonably making full use of the computation and storage capacity of database in distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
+Aiming at reasonably making full use of the computation and storage capacity of the database in a distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
 As the cornerstone of many enterprises, relational database still takes a huge market share. 
-Therefore, at current stage, we prefer to focus on its increment instead of a total overturn.
+Therefore, at the current stage, we prefer to focus on its increment instead of a total overturn.
 
 Sharding-JDBC defines itself as a lightweight Java framework that provides extra service at Java JDBC layer. 
-With client end connecting directly to the database, it provides service in the form of jar and requires no extra deployment and dependence. 
+With the client end connecting directly to the database, it provides service in the form of jar and requires no extra deployment and dependence. 
 It can be considered as an enhanced JDBC driver, which is fully compatible with JDBC and all kinds of ORM frameworks.
 
 * Applicable in any ORM framework based on Java, such as JPA, Hibernate, Mybatis, Spring JDBC Template or direct use of JDBC.
@@ -461,11 +472,11 @@ It can be considered as an enhanced JDBC driver, which is fully compatible with 
 * Support any kind of database that conforms to JDBC standard: MySQL, Oracle, SQLServer and PostgreSQL for now.
 
 Sharding-Proxy defines itself as a transparent database proxy, providing a database server that encapsulates database binary protocol to support heterogeneous languages. 
-Friendlier to DBA, the MySQL/PostgreSQL version provided now can use any kind of client access (such as MySQL Command Client, MySQL Workbench, Navicat etc.) that is compatible of MySQL/PostgreSQL protocol to operate data.
+Friendlier to DBA, the MySQL/PostgreSQL version provided now can use any kind of terminal (such as MySQL Command Client, MySQL Workbench, Navicat etc.) that is compatible of MySQL/PostgreSQL protocol to operate data.
 
 * Totally transparent to applications, it can be used directly as MySQL and PostgreSQL.
 
-* Applicable to any kind of compatible of client end that is compatible of MySQL and PostgreSQL protocol.
+* Applicable to any kind of terminal that is compatible with MySQL and PostgreSQL protocol.
 
 ShardingSphere community vote and result thread:
 https://lists.apache.org/thread.html/xxxxxxxxxxxxxxxxxxxxxxx
@@ -556,7 +567,14 @@ git push
 git push --delete origin ${RELEASE.VERSION}-release
 ```
 
-4. Send e-mail to `general@incubator.apache.org` and `dev@shardingsphere.apache.org` to announce the release is finished.
+4. Update the download page
+
+```
+https://shardingsphere.apache.org/document/current/en/downloads/
+https://shardingsphere.apache.org/document/current/cn/downloads/
+```
+
+5. Send e-mail to `general@incubator.apache.org` and `dev@shardingsphere.apache.org` to announce the release is finished.
 
 Announcement e-mail template:
 
@@ -575,9 +593,9 @@ Apache ShardingSphere (incubating) Team is glad to announce the first release of
 
 ShardingSphere is an open-source ecosystem consisted of a set of distributed database middleware solutions, including 2 independent products, Sharding-JDBC & Sharding-Proxy. 
 They both provide functions of data sharding, distributed transaction and database orchestration, applicable in a variety of situations such as Java isomorphism, heterogeneous language. 
-Aiming at reasonably making full use of the computation and storage capacity of database in distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
+Aiming at reasonably making full use of the computation and storage capacity of the database in a distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
 As the cornerstone of many enterprises, relational database still takes a huge market share. 
-Therefore, at current stage, we prefer to focus on its increment instead of a total overturn.
+Therefore, at the current stage, we prefer to focus on its increment instead of a total overturn.
 
 Download Links: https://shardingsphere.apache.org/document/current/en/downloads/
 

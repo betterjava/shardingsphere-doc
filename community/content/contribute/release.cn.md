@@ -1,6 +1,6 @@
 +++
 title = "发布指南"
-weight = 4
+weight = 6
 chapter = true
 +++
 
@@ -133,6 +133,12 @@ Apache的父POM会为\<distributionManagement\>设置默认值，如果项目的
 </parent>
 ```
 
+### 更新版本说明
+
+```
+https://github.com/apache/incubator-shardingsphere/blob/dev/RELEASE-NOTES.md
+```
+
 ### 创建发布分支
 
 假设从github下载的ShardingSphere源代码在`~/incubator-shardingsphere/`目录；假设即将发布的版本为`${RELEASE.VERSION}`。
@@ -141,9 +147,8 @@ Apache的父POM会为\<distributionManagement\>设置默认值，如果项目的
 ```shell
 cd ~/incubator-shardingsphere/
 git pull
-git branch ${RELEASE.VERSION}-release
+git checkout -b ${RELEASE.VERSION}-release
 git push origin ${RELEASE.VERSION}-release
-git checkout ${RELEASE.VERSION}-release
 ```
 
 ### 发布预校验
@@ -238,6 +243,8 @@ cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-j
 cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-jdbc-distribution/target/*.tar.gz.asc ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
 cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-proxy-distribution/target/*.tar.gz ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
 cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-proxy-distribution/target/*.tar.gz.asc ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
+cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-ui-distribution/target/*.tar.gz ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
+cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-ui-distribution/target/*.tar.gz.asc ~/ss_svn/dev/shardingsphere/${RELEASE.VERSION}
 ```
 
 ### 生成文件签名
@@ -246,6 +253,8 @@ cp -f ~/shardingsphere/incubator-shardingsphere/sharding-distribution/sharding-p
 shasum -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip >> apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip.sha512
 shasum -b -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz >> apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz.sha512
 shasum -b -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz >> apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz.sha512
+shasum -b -a 512 apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz >> apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz.sha512
+
 ```
 
 ### 提交Apache SVN
@@ -262,6 +271,7 @@ svn --username=${APACHE LDAP 用户名} commit -m "release ${RELEASE.VERSION}"
 shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip.sha512
 shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz.sha512
 shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz.sha512
+shasum -c apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz.sha512
 ```
 
 ### 检查gpg签名
@@ -282,6 +292,7 @@ gpg --edit-key "${发布人的gpg用户名}"
 gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-src.zip
 gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz
 gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz
+gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz.asc apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz
 ```
 
 ### 检查发布文件内容
@@ -301,7 +312,8 @@ gpg --verify apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-
 
 #### 检查二进制包的文件内容
 
-解压缩`apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz`和`apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz`，进行如下检查:
+解压缩`apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-jdbc-bin.tar.gz`，`apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-proxy-bin.tar.gz`，`apache-shardingsphere-incubating-${RELEASE.VERSION}-sharding-ui-bin.tar.gz`
+进行如下检查:
 
 - 文件夹包含单词`incubating`
 - 存在`DISCLAIMER`文件
@@ -439,12 +451,12 @@ incubator release.
 
 ShardingSphere is an open-source ecosystem consisted of a set of distributed database middleware solutions, including 2 independent products, Sharding-JDBC & Sharding-Proxy. 
 They both provide functions of data sharding, distributed transaction and database orchestration, applicable in a variety of situations such as Java isomorphism, heterogeneous language. 
-Aiming at reasonably making full use of the computation and storage capacity of database in distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
+Aiming at reasonably making full use of the computation and storage capacity of the database in a distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
 As the cornerstone of many enterprises, relational database still takes a huge market share. 
-Therefore, at current stage, we prefer to focus on its increment instead of a total overturn.
+Therefore, at the current stage, we prefer to focus on its increment instead of a total overturn.
 
 Sharding-JDBC defines itself as a lightweight Java framework that provides extra service at Java JDBC layer. 
-With client end connecting directly to the database, it provides service in the form of jar and requires no extra deployment and dependence. 
+With the client end connecting directly to the database, it provides service in the form of jar and requires no extra deployment and dependence. 
 It can be considered as an enhanced JDBC driver, which is fully compatible with JDBC and all kinds of ORM frameworks.
 
 * Applicable in any ORM framework based on Java, such as JPA, Hibernate, Mybatis, Spring JDBC Template or direct use of JDBC.
@@ -452,12 +464,11 @@ It can be considered as an enhanced JDBC driver, which is fully compatible with 
 * Support any kind of database that conforms to JDBC standard: MySQL, Oracle, SQLServer and PostgreSQL for now.
 
 Sharding-Proxy defines itself as a transparent database proxy, providing a database server that encapsulates database binary protocol to support heterogeneous languages. 
-Friendlier to DBA, the MySQL/PostgreSQL version provided now can use any kind of client access (such as MySQL Command Client, MySQL Workbench, Navicat etc.) that is compatible of MySQL/PostgreSQL protocol to operate data.
+Friendlier to DBA, the MySQL/PostgreSQL version provided now can use any kind of terminal (such as MySQL Command Client, MySQL Workbench, Navicat etc.) that is compatible of MySQL/PostgreSQL protocol to operate data.
 
 * Totally transparent to applications, it can be used directly as MySQL and PostgreSQL.
 
-* Applicable to any kind of compatible of client end that is compatible of MySQL and PostgreSQL protocol.
-
+* Applicable to any kind of terminal that is compatible with MySQL and PostgreSQL protocol.
 
 ShardingSphere community vote and result thread:
 https://lists.apache.org/thread.html/xxxxxxxxxxxxxxxxxxxxxxx
@@ -547,7 +558,14 @@ git push
 git push --delete origin ${RELEASE.VERSION}-release
 ```
 
-4. 发送邮件到`general@incubator.apache.org`和`dev@shardingsphere.apache.org`通知完成版本发布。
+4. 更新下载页面
+
+```
+https://shardingsphere.apache.org/document/current/en/downloads/
+https://shardingsphere.apache.org/document/current/cn/downloads/
+```
+
+5. 发送邮件到`general@incubator.apache.org`和`dev@shardingsphere.apache.org`通知完成版本发布。
 
 通知邮件模板：
 
@@ -566,9 +584,9 @@ Apache ShardingSphere (incubating) Team is glad to announce the first release of
 
 ShardingSphere is an open-source ecosystem consisted of a set of distributed database middleware solutions, including 2 independent products, Sharding-JDBC & Sharding-Proxy. 
 They both provide functions of data sharding, distributed transaction and database orchestration, applicable in a variety of situations such as Java isomorphism, heterogeneous language. 
-Aiming at reasonably making full use of the computation and storage capacity of database in distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
+Aiming at reasonably making full use of the computation and storage capacity of the database in a distributed system, ShardingSphere defines itself as a middleware, rather than a totally new type of database. 
 As the cornerstone of many enterprises, relational database still takes a huge market share. 
-Therefore, at current stage, we prefer to focus on its increment instead of a total overturn.
+Therefore, at the current stage, we prefer to focus on its increment instead of a total overturn.
 
 Download Links: https://shardingsphere.apache.org/document/current/en/downloads/
 
